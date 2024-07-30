@@ -49,14 +49,11 @@
         .background .watermark {
             color: yellow;
             font-family: 'proxima-soft', sans-serif;
-            font-size: 26px;
+            font-size: 30px;
             font-weight: 400;
+            line-height: 24px;
 
-            display: ruby-text;
-            line-height: 26px;
-
-            padding-right: 40px;
-            padding-top: 18px;
+            opacity: 0.4;
         }
 
         .scene {
@@ -75,7 +72,7 @@
 
         .selected-empty {
             zoom: 1.6 !important;   
-            margin-left: 8px !important;
+            margin-left: 9px !important;
             margin-right: 8px !important;
             margin-top: 8px !important;
             margin-bottom: 8px !important;
@@ -189,7 +186,7 @@
             background: linear-gradient(#500082, #800057 50%);
             border: 4px solid #ccc;
 
-            opacity: 0.85;
+            opacity: 0.75;
 
             font-family: 'proxima-soft', sans-serif;
             font-size: 32px;
@@ -234,7 +231,7 @@
 
         .game-info {
             margin-left: 14px;
-            line-height: 80px;
+            line-height: 74px;
             font-size: 36px;
         }
     </style>
@@ -243,7 +240,7 @@
     <!-- <img class="sample" src="samples/empty.png" /> -->
     <div class="background">
         <div style="margin-top: 32px; position: absolute;"><span class="loader">cubeboot loader</span></div>
-        <div style="margin-top: 10px; float: right;"><span class="watermark">MOCKUP<br/>cubeboot sim</span></div>
+        <div style="margin-top: 34px; margin-right: 28px; float: right; text-align: center;"><span class="watermark">MOCKUP<br/>cubeboot sim</span></div>
     </div>
     <div class="grid-container" id="grid-container">
         <script>
@@ -322,25 +319,38 @@
 
             function keydownHandler(event) {
                 const previousSelectedIndex = selectedIndex;
-                switch (event.key) {
-                    case 'ArrowUp':
-                        selectedIndex -= cols;
-                        break;
-                    case 'ArrowDown':
-                        selectedIndex += cols;
-                        break;
-                    case 'ArrowLeft':
-                        selectedIndex -= 1;
-                        break;
-                    case 'ArrowRight':
-                        selectedIndex += 1;
-                        break;
+                if (event.key === 'ArrowRight') {
+                    if ((selectedIndex % 8) == (8 - 1)) {
+                        console.log("input err");
+                    }
+                    else {
+                        selectedIndex++;
+                    }
                 }
 
-                if (selectedIndex < 0) {
-                    selectedIndex = 0;
-                } else if (selectedIndex >= scene.children.length - 1) {
-                    selectedIndex = scene.children.length - 2;
+                if (event.key === 'ArrowLeft') {
+                    if ((selectedIndex % 8) == 0) {
+                        console.log("input err");
+                    }
+                    else {
+                        selectedIndex--;
+                    }
+                }
+
+                if (event.key === 'ArrowDown') {
+                    if ((selectedIndex + 8) > (4 * 8 - 1)) {
+                        console.log("input err");
+                    } else {
+                        selectedIndex += 8;
+                    }
+                }
+
+                if (event.key === 'ArrowUp') {
+                    if ((selectedIndex - 8) < 0) {
+                        console.log("input err");
+                    } else {
+                        selectedIndex -= 8;
+                    }
                 }
 
                 if (selectedIndex !== previousSelectedIndex) {
@@ -374,7 +384,7 @@
                 const rotation = Math.sin(time) * 5; // Rotate +-5 degrees
 
                 selectedCube.style.transform = `translate(${wobbleX}px, ${wobbleY}px) rotate(${rotation}deg) rotateX(${rotation}deg) rotateY(${rotation}deg)`;
-                requestAnimationFrame(animate);
+                // requestAnimationFrame(animate);
             }
 
             requestAnimationFrame(animate);
@@ -393,5 +403,27 @@
             </div>          
         </div>
     </div>
+
+    <script>
+        function resize() {
+            // clear changes
+            document.body.style.zoom = '';
+            document.body.style.height = '';            
+
+            const bg = document.querySelector('.background');
+            const rect = bg.getBoundingClientRect();
+            let factor = document.body.clientWidth / rect.width;
+            if (factor * rect.height > document.body.clientHeight) {
+                factor = document.body.clientHeight / rect.height;
+            }
+            console.log("factor", factor);
+            document.body.style.zoom = factor;
+            document.body.style.height = `${100 / factor}vh`;
+        }
+
+        // setInterval(resize, 1000);
+        window.addEventListener('resize', resize);
+        resize();
+    </script>
 </body>
 </html>
