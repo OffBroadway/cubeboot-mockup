@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 3D Rounded Cubes Grid</title>
+    <style>
+        @font-face {
+        font-family: "proxima-soft";
+        src: url("fonts/proxima-soft-13.woff") format('woff');
+        font-weight: bold;
+        }
+
+        body { 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            perspective: 1000px; /* Adjusted perspective value for a subtler 3D effect */
+            background: black;
+        }
+        .sample {
+            position: absolute;
+            left: 25.2%;
+            height: 100%;
+        }
+
+        .background {
+            position: absolute;
+            width: 734px;
+            height: 564px;
+            /* background: url('samples/grid.png') no-repeat; */
+            /* background: url('samples/empty.png') no-repeat; */
+            /* background: url('samples/partial.png') no-repeat; */
+            background-size: contain;
+            opacity: 1.0;
+        }
+
+        .background .loader {
+            color: white;
+            font-family: 'proxima-soft', sans-serif;
+            font-size: 26px;
+            font-weight: 400;
+
+            padding: 38px;
+        }
+
+        .background .watermark {
+            color: yellow;
+            font-family: 'proxima-soft', sans-serif;
+            font-size: 26px;
+            font-weight: 400;
+
+            display: ruby-text;
+            line-height: 26px;
+
+            padding-right: 40px;
+            padding-top: 18px;
+        }
+
+        .scene {
+            zoom: 0.605;
+            margin-top: 40px;
+
+            display: flex;
+            flex-wrap: wrap;
+            width: 1040px; /* Adjusted width for 8x4 grid with increased spacing */
+            height: 460px; /* Adjusted height for 8x4 grid with increased spacing */
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            transform-style: preserve-3d;
+        }
+
+        .selected-empty {
+            zoom: 1.6 !important;   
+            margin-left: 8px !important;
+            margin-right: 8px !important;
+            margin-top: 8px !important;
+            margin-bottom: 8px !important;
+
+            /* c54fb3 */
+        }
+
+        .selected-populated {
+            zoom: 2.3 !important;
+            margin-left: -3px !important;
+            margin-right: -2px !important;
+            margin-top: -4px !important;
+            margin-bottom: -4px !important;
+
+            /* dd64db */
+        }
+
+        .empty {
+            margin: 30px;
+        }
+
+        .populated {
+            zoom: 1.4;
+            margin: 14px;
+        }
+
+        .empty div {
+            filter: saturate(2.0) !important;
+        }
+
+        .populated div {
+            filter: saturate(3.5) !important;
+        }
+
+        .selected-empty div {
+            filter: saturate(2.5) !important;
+        }
+
+        .selected-populated div {
+            filter: saturate(4) hue-rotate(340deg) !important
+        }
+
+
+        .cube {
+            width: 56px;
+            height: 56px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateY(0deg) rotateX(0deg);
+        }
+
+        .cube div {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            border-radius: 6px;
+            /* background: rgba(128, 16, 140, 0.4); */
+            /* background: rgba(200, 60, 217, 0.20); */
+            /* background: linear-gradient(45deg, rgba(200, 60, 217, 0.02), rgba(128, 16, 140, 1)); */
+            background: linear-gradient(45deg, #59007705, #420356ff);
+            /* filter: brightness(1.75); */
+            /* filter: saturate(2.0); */
+            
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            /* backdrop-filter: blur(7.8px); */
+            /* border: 1px solid rgba(200, 60, 217, 0.05); */
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            opacity: 0.9;
+        }
+        .front  { transform: rotateY(  0deg) translateZ(25px); }
+        .back   { transform: rotateY(180deg) translateZ(25px); }
+        .right  { transform: rotateY( 90deg) translateZ(25px); }
+        .left   { transform: rotateY(-90deg) translateZ(25px); }
+        .top    { transform: rotateX( 90deg) translateZ(25px); }
+        .bottom { transform: rotateX(-90deg) translateZ(25px); }
+
+
+        .grid-container {
+            position: absolute;
+            width: 734px;
+            height: 564px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 10%, rgba(0, 0, 0, 50%) 25%, transparent 60%);
+            overflow: hidden;
+            opacity: 0.75;
+        }
+        .grid-line {
+            position: absolute;
+            background: #5d5d5d;
+        }
+        .horizontal {
+            height: 2px;
+            width: 100%;
+        }
+        .vertical {
+            width: 2px;
+            height: 100%;
+        }
+
+
+        .info {
+            opacity: 1;
+            margin-left: -8px;
+            margin-right: -8px;
+            margin-top: 44px;
+
+            width: 100%;
+            height: 140px;
+
+            color: white;
+            background: linear-gradient(#500082, #800057 50%);
+            border: 4px solid #ccc;
+
+            opacity: 0.85;
+
+            font-family: 'proxima-soft', sans-serif;
+            font-size: 32px;
+            font-weight: 400;
+
+            display: flex;
+        }
+
+        .info div {
+            overflow: hidden;
+        }
+
+        .info-left {
+            width: 34%;
+        }
+
+        .info-left img {
+            padding: 18px;
+            width: 314px;
+        }
+
+        .info-right {
+            flex-grow: 1;
+
+            padding: 24px;
+            font-size: 41px;
+            padding-left: 10px;
+
+            width: 66%;
+        }
+
+        .game-type {
+            line-height: 40px;
+            margin-top: 10px;
+            float: left;
+            padding-top: 4px;
+            padding-bottom: 0px;
+            padding-left: 18px;
+            padding-right: 18px;
+            border: 3px solid white;
+        }
+
+        .game-info {
+            margin-left: 14px;
+            line-height: 80px;
+            font-size: 36px;
+        }
+    </style>
+</head>
+<body>
+    <!-- <img class="sample" src="samples/empty.png" /> -->
+    <div class="background">
+        <div style="margin-top: 32px; position: absolute;"><span class="loader">cubeboot loader</span></div>
+        <div style="margin-top: 10px; float: right;"><span class="watermark">MOCKUP<br/>cubeboot sim</span></div>
+    </div>
+    <div class="grid-container" id="grid-container">
+        <script>
+            function gridSetup() {
+                const container = document.getElementById('grid-container');
+                const lineThickness = 2;
+                const rows = 28;
+                const cols = 36;
+        
+                // Calculate cell dimensions
+                const adjustedWidth = Math.floor((734 - (cols - 1) * lineThickness) / cols) * cols + (cols - 1) * lineThickness;
+                const adjustedHeight = Math.floor((564 - (rows - 1) * lineThickness) / rows) * rows + (rows - 1) * lineThickness;
+        
+                container.style.width = `${adjustedWidth}px`;
+                container.style.height = `${adjustedHeight}px`;
+        
+                const cellWidth = (adjustedWidth - (cols - 1) * lineThickness) / cols;
+                const cellHeight = (adjustedHeight - (rows - 1) * lineThickness) / rows;
+        
+                // Add horizontal lines
+                for (let i = 0; i <= rows; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'grid-line horizontal';
+                    line.style.top = `${i * (cellHeight + lineThickness) - (i === 0 ? 0 : lineThickness)}px`;
+                    if (line.style.top === '0px') {
+                        continue;
+                    }
+                    container.appendChild(line);
+                }
+        
+                // Add vertical lines
+                for (let j = 0; j <= cols; j++) {
+                    const line = document.createElement('div');
+                    line.className = 'grid-line vertical';
+                    line.style.left = `${j * (cellWidth + lineThickness) - (j === 0 ? 0 : lineThickness)}px`;
+                    if (line.style.left === '0px') {
+                        continue;
+                    }
+                    container.appendChild(line);
+                }
+            }
+
+            gridSetup();
+        </script>
+    </div>
+    <div class="scene">
+        <!-- Generate the grid of cubes -->
+        <script>
+            const scene = document.querySelector('.scene');
+            const rows = 4;
+            const cols = 8;
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const cube = document.createElement('div');
+                    cube.classList.add('cube');
+                    if (i < 2 || i == 2 && j < 4) {
+                        cube.classList.add('populated');
+                    } else {
+                        cube.classList.add('empty');
+                    }
+
+                    const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
+                    faces.forEach(face => {
+                        const faceDiv = document.createElement('div');
+                        faceDiv.classList.add(face);
+                        cube.appendChild(faceDiv);
+                    });
+
+                    scene.appendChild(cube);
+                }
+            }
+
+            // Add the selected class to one cube for animation
+            let selectedIndex = 11;
+
+            function keydownHandler(event) {
+                const previousSelectedIndex = selectedIndex;
+                switch (event.key) {
+                    case 'ArrowUp':
+                        selectedIndex -= cols;
+                        break;
+                    case 'ArrowDown':
+                        selectedIndex += cols;
+                        break;
+                    case 'ArrowLeft':
+                        selectedIndex -= 1;
+                        break;
+                    case 'ArrowRight':
+                        selectedIndex += 1;
+                        break;
+                }
+
+                if (selectedIndex < 0) {
+                    selectedIndex = 0;
+                } else if (selectedIndex >= scene.children.length - 1) {
+                    selectedIndex = scene.children.length - 2;
+                }
+
+                if (selectedIndex !== previousSelectedIndex) {
+                    animate();
+                }
+            }
+
+            document.addEventListener('keydown', keydownHandler);
+
+            function animate() {
+                const previousSelectedCube = document.querySelector('.selected');
+                const selectedCube = scene.children[1 + selectedIndex];
+                if (selectedCube != previousSelectedCube) {
+                    if (previousSelectedCube !== null) {
+                        previousSelectedCube.classList.remove('selected');
+                        previousSelectedCube.classList.remove('selected-empty');
+                        previousSelectedCube.classList.remove('selected-populated');
+                        previousSelectedCube.style.transform = "";
+                    }
+                    selectedCube.classList.add('selected');
+                    if (selectedCube.classList.contains('empty')) {
+                        selectedCube.classList.add('selected-empty');
+                    } else {
+                        selectedCube.classList.add('selected-populated');
+                    }
+                }
+
+                const time = performance.now() / 1000;
+                const wobbleX = Math.sin(time * 2) * 5; // Wobble +-5px
+                const wobbleY = Math.cos(time * 2) * 5; // Wobble +-5px
+                const rotation = Math.sin(time) * 5; // Rotate +-5 degrees
+
+                selectedCube.style.transform = `translate(${wobbleX}px, ${wobbleY}px) rotate(${rotation}deg) rotateX(${rotation}deg) rotateY(${rotation}deg)`;
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        </script>
+
+        <div class="info">
+            <div class="info-left">
+                <img src="assets/banner.png" />
+            </div>
+          
+            <div class="info-right">
+                <span>SOME GAME NAME</span>
+                <br>
+                <span class="game-type">ISO</span>
+                <span class="game-info">The game is really fun and you should</span>
+            </div>          
+        </div>
+    </div>
+</body>
+</html>

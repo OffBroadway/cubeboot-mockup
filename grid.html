@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid with Gradient Halo</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: black;
+        }
+        .grid-container {
+            position: relative;
+            width: 734px;
+            height: 564px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 10%, rgba(0, 0, 0, 80%) 35%, transparent 60%);
+            overflow: hidden;
+        }
+        .grid-line {
+            position: absolute;
+            background: #5d5d5d;
+        }
+        .horizontal {
+            height: 2px;
+            width: 100%;
+        }
+        .vertical {
+            width: 2px;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container" id="grid-container"></div>
+
+    <script>
+        const container = document.getElementById('grid-container');
+        const lineThickness = 2;
+        const rows = 28;
+        const cols = 36;
+
+        // Calculate cell dimensions
+        const adjustedWidth = Math.floor((734 - (cols - 1) * lineThickness) / cols) * cols + (cols - 1) * lineThickness;
+        const adjustedHeight = Math.floor((564 - (rows - 1) * lineThickness) / rows) * rows + (rows - 1) * lineThickness;
+
+        container.style.width = `${adjustedWidth}px`;
+        container.style.height = `${adjustedHeight}px`;
+
+        const cellWidth = (adjustedWidth - (cols - 1) * lineThickness) / cols;
+        const cellHeight = (adjustedHeight - (rows - 1) * lineThickness) / rows;
+
+        // Add horizontal lines
+        for (let i = 0; i <= rows; i++) {
+            const line = document.createElement('div');
+            line.className = 'grid-line horizontal';
+            line.style.top = `${i * (cellHeight + lineThickness) - (i === 0 ? 0 : lineThickness)}px`;
+            if (line.style.top === '0px') {
+                continue;
+            }
+            container.appendChild(line);
+        }
+
+        // Add vertical lines
+        for (let j = 0; j <= cols; j++) {
+            const line = document.createElement('div');
+            line.className = 'grid-line vertical';
+            line.style.left = `${j * (cellWidth + lineThickness) - (j === 0 ? 0 : lineThickness)}px`;
+            if (line.style.left === '0px') {
+                continue;
+            }
+            container.appendChild(line);
+        }
+    </script>
+</body>
+</html>
