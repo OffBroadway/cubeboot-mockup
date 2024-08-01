@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dancing 3D Text</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f0f0;
+            perspective: 1000px; /* Add perspective for 3D effect */
+            overflow: hidden;
+        }
+        .text-container {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            color: transparent;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+        }
+    </style>
+</head>
+<body>
+    <div class="text-container">Dancing 3D Text</div>
+
+    <script>
+        const textContainer = document.querySelector('.text-container');
+
+        function animate() {
+            const time = performance.now() / 1000; // Get time in seconds
+
+            textContainer.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`;
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>
