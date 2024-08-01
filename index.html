@@ -31,6 +31,7 @@
             perspective: 1000px; /* Adjusted perspective value for a subtler 3D effect */
             background: black;
         }
+
         .sample {
             position: absolute;
             left: 25.2%;
@@ -57,6 +58,14 @@
             padding: 38px;
         }
 
+        .background .ready {
+            color: white;
+            font-family: 'proxima-soft', sans-serif;
+            font-size: 29px;
+            font-weight: 400;
+            width: 100%;
+        }
+
         .background .watermark {
             color: yellow;
             font-family: 'proxima-soft', sans-serif;
@@ -66,6 +75,26 @@
 
             opacity: 0.4;
         }
+
+        .text-loader {
+            margin-top: 32px;
+            position: absolute;
+        }
+
+        .text-ready {
+            margin-top: 50px;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+        }
+
+        .text-watermark {
+            margin-top: 34px;
+            margin-right: 28px;
+            float: right;
+            text-align: center;
+        }
+
 
         .scene {
             zoom: 0.605;
@@ -284,17 +313,48 @@
             text-shadow: 1px 1px 0 black, 2px 2px 0 #420356;
             z-index: -1;
         }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 700ms forwards;
+        }
+
+        .fade-out {
+            animation: fadeOut 700ms forwards;
+            opacity: 0; /* Ensure it's hidden after animation */
+        }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
     <!-- <img class="sample" src="samples/empty.png" /> -->
     <div class="grid-container"></div>
     <div class="background">
-        <div style="margin-top: 32px; position: absolute; display: block;"><span class="loader">cubeboot loader</span></div>
-        <div style="margin-top: 50px; position: absolute; display: none; width: 100%; text-align: center;"><span class="loader" style="width: 100%; font-size: 29px;">Ready to play the game?</span></div>
-        <div style="margin-top: 34px; margin-right: 28px; float: right; text-align: center;"><span class="watermark">MOCKUP<br/>cubeboot</span></div>
+        <div class="text-loader"><span class="loader">cubeboot loader</span></div>
+        <div class="text-ready hidden"><span class="ready">Ready to play the game?</span></div>
+        <div class="text-watermark"><span class="watermark">MOCKUP<br/>cubeboot</span></div>
 
-        <div class="start">
+        <div class="start hidden">
             <span data-text="P">P</span>
             <span data-text="R">R</span>
             <span data-text="E">E</span>
@@ -309,154 +369,12 @@
         </div>
     </div>
     
-    <div class="scene" style="display: none;">
-        <!-- Generate the grid of cubes -->
-        <script>
-            const scene = document.querySelector('.scene');
-            const rows = 4;
-            const cols = 8;
-
-            const gameCount = 12;
-            const populatedRows = Math.floor(gameCount / 8);
-            const populatedExtra = gameCount % 8;
-            console.log("populatedRows", populatedRows);
-            console.log("populatedExtra", populatedExtra);
-
-            for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < cols; j++) {
-                    const cube = document.createElement('div');
-                    cube.classList.add('cube');
-                    if (i < populatedRows || i == populatedRows && j < populatedExtra) {
-                        cube.classList.add('populated');
-                    } else {
-                        cube.classList.add('empty');
-                    }
-
-                    const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
-                    faces.forEach(face => {
-                        const faceDiv = document.createElement('div');
-                        faceDiv.classList.add(face);
-                        cube.appendChild(faceDiv);
-                    });
-
-                    if (cube.classList.contains('populated')) {
-                        const faceDiv = document.createElement('div');
-                        faceDiv.classList.add('middle');
-
-                        const img = document.createElement('img');
-                        img.src = 'assets/banner.png';
-                        faceDiv.appendChild(img);
-
-                        cube.appendChild(faceDiv);
-                    }
-
-                    scene.appendChild(cube);
-                }
-            }
-
-            // Add the selected class to one cube for animation
-            let selectedIndex = 0;
-
-            const startText = document.querySelector('.start');
-
-            function keydownHandler(event) {
-                const previousSelectedIndex = selectedIndex;
-                if (event.key === 'ArrowRight') {
-                    if ((selectedIndex % 8) == (8 - 1)) {
-                        console.log("input err");
-                    }
-                    else {
-                        selectedIndex++;
-                    }
-                }
-
-                if (event.key === 'ArrowLeft') {
-                    if ((selectedIndex % 8) == 0) {
-                        console.log("input err");
-                    }
-                    else {
-                        selectedIndex--;
-                    }
-                }
-
-                if (event.key === 'ArrowDown') {
-                    if ((selectedIndex + 8) > (4 * 8 - 1)) {
-                        console.log("input err");
-                    } else {
-                        selectedIndex += 8;
-                    }
-                }
-
-                if (event.key === 'ArrowUp') {
-                    if ((selectedIndex - 8) < 0) {
-                        console.log("input err");
-                    } else {
-                        selectedIndex -= 8;
-                    }
-                }
-
-                if (selectedIndex !== previousSelectedIndex) {
-                    animate();
-                }
-            }
-
-            document.addEventListener('keydown', keydownHandler);
-
-            function animate() {
-                const previousSelectedCube = document.querySelector('.selected');
-                const selectedCube = scene.children[1 + selectedIndex];
-                let scale = 1.0;
-                if (selectedCube != previousSelectedCube) {
-                    if (previousSelectedCube !== null) {
-                        previousSelectedCube.classList.remove('selected');
-                        previousSelectedCube.classList.remove('selected-empty');
-                        previousSelectedCube.classList.remove('selected-populated');
-                        previousSelectedCube.style.transform = "";
-                    }
-                    selectedCube.classList.add('selected');
-                    if (selectedCube.classList.contains('empty')) {
-                        scale = 1.6;
-                        selectedCube.classList.add('selected-empty');
-                    } else {
-                        scale = 2.3;
-                        selectedCube.classList.add('selected-populated');
-                    }
-                }
-
-                const time = performance.now() / 1000;
-
-                // cube
-                const wobbleX = Math.sin(time * 2) * 5; // Wobble +-5px
-                const wobbleY = Math.cos(time * 2) * 5; // Wobble +-5px
-                const rotation = Math.sin(time) * 5; // Rotate +-5 degrees
-                selectedCube.style.transform = `translate(${wobbleX}px, ${wobbleY}px) rotate(${rotation}deg) rotateX(${rotation}deg) rotateY(${rotation}deg) scale(${scale})`;
-
-                // start text
-                const amplitude = 2; // Amplitude of the dance
-                const frequency = 2; // Frequency of the dance
-                const rotationAmplitude = 8; // Amplitude of rotation
-                const swayAmplitude = 8; // Amplitude of rotation
-
-                const x = amplitude * Math.sin(frequency * time);
-                const y = amplitude * Math.abs(Math.cos(frequency * time)) * 2;
-                const z = amplitude * Math.sin(frequency * time / 2); // Add some Z movement
-
-                const rotateY = swayAmplitude * Math.sin(time) * 2;
-                const rotateXZ = rotationAmplitude * Math.sin(frequency * time / 2) / 3;
-
-                startText.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotateY}deg) rotateX(${rotateXZ}deg) rotateZ(${rotateXZ}deg) scale(0.90)`;
-                // requestAnimationFrame(animate);
-            }
-
-            requestAnimationFrame(animate);
-            // setInterval(animate, 1000 / 30);
-        </script>
-
+    <div class="scene">
         <div class="info">
             <div class="info-left">
                 <img src="assets/banner.png" />
             </div>
-          
+
             <div class="info-right">
                 <span>SOME GAME NAME</span>
                 <br>
@@ -467,6 +385,193 @@
     </div>
 
     <script>
+        function hideElement(element) {
+            element.classList.remove('hidden');
+            element.classList.remove('fade-in');
+            element.classList.add('fade-out');
+        }
+
+        function showElement(element) {
+            element.classList.remove('hidden');
+            element.classList.remove('fade-out');
+            element.classList.add('fade-in');
+        }
+
+        const scene = document.querySelector('.scene');
+        const info = document.querySelector('.info');
+        const rows = 4;
+        const cols = 8;
+
+        const gameCount = 12;
+        const populatedRows = Math.floor(gameCount / 8);
+        const populatedExtra = gameCount % 8;
+        console.log("populatedRows", populatedRows);
+        console.log("populatedExtra", populatedExtra);
+
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                const cube = document.createElement('div');
+                cube.classList.add('cube');
+                if (i < populatedRows || i == populatedRows && j < populatedExtra) {
+                    cube.classList.add('populated');
+                } else {
+                    cube.classList.add('empty');
+                }
+
+                const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
+                faces.forEach(face => {
+                    const faceDiv = document.createElement('div');
+                    faceDiv.classList.add(face);
+                    cube.appendChild(faceDiv);
+                });
+
+                if (cube.classList.contains('populated')) {
+                    const faceDiv = document.createElement('div');
+                    faceDiv.classList.add('middle');
+
+                    const img = document.createElement('img');
+                    img.src = 'assets/banner.png';
+                    faceDiv.appendChild(img);
+
+                    cube.appendChild(faceDiv);
+                }
+
+                scene.insertBefore(cube, info);
+            }
+        }
+
+        // Add the selected class to one cube for animation
+        let selectedIndex = 0;
+        let currentPage = 0;
+
+        const PAGE_SELECTING = 0;
+        const PAGE_LOADING = 1;
+
+        const startText = document.querySelector('.start');
+        const readyText = document.querySelector('.text-ready');
+        const loaderText = document.querySelector('.text-loader');
+
+        function selectingKeydownHandler(event) {
+            const previousSelectedIndex = selectedIndex;
+            if (event.key === 'Enter' || event.key === 'x' || event.key === 'z') {
+                hideElement(scene);
+                hideElement(loaderText);
+                showElement(startText);
+                showElement(readyText);
+                currentPage = PAGE_LOADING;
+            }
+
+            if (event.key === 'ArrowRight') {
+                if ((selectedIndex % 8) == (8 - 1)) {
+                    console.log("input err");
+                }
+                else {
+                    selectedIndex++;
+                }
+            }
+
+            if (event.key === 'ArrowLeft') {
+                if ((selectedIndex % 8) == 0) {
+                    console.log("input err");
+                }
+                else {
+                    selectedIndex--;
+                }
+            }
+
+            if (event.key === 'ArrowDown') {
+                if ((selectedIndex + 8) > (4 * 8 - 1)) {
+                    console.log("input err");
+                } else {
+                    selectedIndex += 8;
+                }
+            }
+
+            if (event.key === 'ArrowUp') {
+                if ((selectedIndex - 8) < 0) {
+                    console.log("input err");
+                } else {
+                    selectedIndex -= 8;
+                }
+            }
+
+            if (selectedIndex !== previousSelectedIndex) {
+                animate();
+            }
+        }
+
+        function loadingKeydownHandler(event) {
+            if (event.key === 'Enter' || event.key === 'x' || event.key === 'z') {
+                showElement(scene);
+                showElement(loaderText);
+                hideElement(startText);
+                hideElement(readyText);
+                currentPage = PAGE_SELECTING;
+            }
+        }
+
+        function keydownHandler(event) {
+            if (currentPage === PAGE_SELECTING) {
+                selectingKeydownHandler(event);
+            } else if (currentPage === PAGE_LOADING) {
+                loadingKeydownHandler(event);
+            }
+        }
+
+        document.addEventListener('keydown', keydownHandler);
+
+        function animate() {
+            const previousSelectedCube = document.querySelector('.selected');
+            const selectedCube = scene.children[selectedIndex];
+            if (selectedCube != previousSelectedCube) {
+                if (previousSelectedCube !== null) {
+                    previousSelectedCube.classList.remove('selected');
+                    previousSelectedCube.classList.remove('selected-empty');
+                    previousSelectedCube.classList.remove('selected-populated');
+                    previousSelectedCube.style.transform = "";
+                }
+                selectedCube.classList.add('selected');
+                if (selectedCube.classList.contains('empty')) {
+                    selectedCube.classList.add('selected-empty');
+                } else {
+                    selectedCube.classList.add('selected-populated');
+                }
+            }
+
+            let scale = 1.0;
+            if (selectedCube.classList.contains('empty')) {
+                scale = 1.6;
+            } else {
+                scale = 2.3;
+            }
+
+            const time = performance.now() / 1000;
+
+            // cube
+            const wobbleX = Math.sin(time * 2) * 5; // Wobble +-5px
+            const wobbleY = Math.cos(time * 2) * 5; // Wobble +-5px
+            const rotation = Math.sin(time) * 5; // Rotate +-5 degrees
+            selectedCube.style.transform = `translate(${wobbleX}px, ${wobbleY}px) rotate(${rotation}deg) rotateX(${rotation}deg) rotateY(${rotation}deg) scale(${scale})`;
+
+            // start text
+            const amplitude = 2; // Amplitude of the dance
+            const frequency = 2; // Frequency of the dance
+            const rotationAmplitude = 8; // Amplitude of rotation
+            const swayAmplitude = 8; // Amplitude of rotation
+
+            const x = amplitude * Math.sin(frequency * time);
+            const y = amplitude * Math.abs(Math.cos(frequency * time)) * 2;
+            const z = amplitude * Math.sin(frequency * time / 2); // Add some Z movement
+
+            const rotateY = swayAmplitude * Math.sin(time) * 2;
+            const rotateXZ = rotationAmplitude * Math.sin(frequency * time / 2) / 3;
+
+            startText.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotateY}deg) rotateX(${rotateXZ}deg) rotateZ(${rotateXZ}deg) scale(0.90)`;
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+
         function resize() {
             // clear changes
             document.body.style.zoom = '';
