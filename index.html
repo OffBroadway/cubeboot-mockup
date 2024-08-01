@@ -70,33 +70,16 @@
             transform-style: preserve-3d;
         }
 
-        .selected-empty {
-            zoom: 1.6 !important;   
-            margin-left: 9px !important;
-            margin-right: 8px !important;
-            margin-top: 8px !important;
-            margin-bottom: 8px !important;
-
-            /* c54fb3 */
-        }
-
-        .selected-populated {
-            zoom: 2.3 !important;
-            margin-left: -3px !important;
-            margin-right: -2px !important;
-            margin-top: -4px !important;
-            margin-bottom: -4px !important;
-
-            /* dd64db */
-        }
-
-        .empty {
+        .empty, .populated {
             margin: 30px;
         }
 
+        .empty {
+            transform: rotateY(0deg) rotateX(0deg) scale(1.0);
+        }
+
         .populated {
-            zoom: 1.4;
-            margin: 14px;
+            transform: rotateY(0deg) rotateX(0deg) scale(1.4);
         }
 
         .empty div {
@@ -107,6 +90,10 @@
             filter: saturate(3.5) !important;
         }
 
+        .populated div img {
+            filter: saturate(0.285) !important
+        }
+
         .selected-empty div {
             filter: saturate(2.5) !important;
         }
@@ -115,13 +102,31 @@
             filter: saturate(4) hue-rotate(340deg) !important
         }
 
+        .selected-populated div img {
+            filter: saturate(0.25) !important
+        }
+
+        .populated .middle {
+            opacity: 1;
+        }
+
+        .populated .front {
+            clip-path: polygon(0% 0%, 0% 100%, 10% 100%, 10% 10%, 90% 10%, 90% 90%, 10% 90%, 10% 100%, 100% 100%, 100% 0%);
+        }
 
         .cube {
             width: 56px;
             height: 56px;
             position: relative;
             transform-style: preserve-3d;
-            transform: rotateY(0deg) rotateX(0deg);
+        }
+
+        .cube div img {
+            position: absolute;
+            width: 85%;
+            height: 85%;
+            top: 5%;
+            left: 5%;
         }
 
         .cube div {
@@ -149,6 +154,11 @@
         .top    { transform: rotateX( 90deg) translateZ(25px); }
         .bottom { transform: rotateX(-90deg) translateZ(25px); }
 
+        .middle {
+            transform: rotateY(180deg) translateZ(6px);
+            background: none;
+            border: none;
+        }
 
         .grid-container {
             position: absolute;
@@ -293,11 +303,17 @@
             const rows = 4;
             const cols = 8;
 
+            const gameCount = 12;
+            const populatedRows = Math.floor(gameCount / 8);
+            const populatedExtra = gameCount % 8;
+            console.log("populatedRows", populatedRows);
+            console.log("populatedExtra", populatedExtra);
+
             for (let i = 0; i < rows; i++) {
                 for (let j = 0; j < cols; j++) {
                     const cube = document.createElement('div');
                     cube.classList.add('cube');
-                    if (i < 2 || i == 2 && j < 4) {
+                    if (i < populatedRows || i == populatedRows && j < populatedExtra) {
                         cube.classList.add('populated');
                     } else {
                         cube.classList.add('empty');
@@ -310,12 +326,23 @@
                         cube.appendChild(faceDiv);
                     });
 
+                    if (cube.classList.contains('populated')) {
+                        const faceDiv = document.createElement('div');
+                        faceDiv.classList.add('middle');
+
+                        const img = document.createElement('img');
+                        img.src = 'assets/banner.png';
+                        faceDiv.appendChild(img);
+
+                        cube.appendChild(faceDiv);
+                    }
+
                     scene.appendChild(cube);
                 }
             }
 
             // Add the selected class to one cube for animation
-            let selectedIndex = 11;
+            let selectedIndex = 0;
 
             function keydownHandler(event) {
                 const previousSelectedIndex = selectedIndex;
@@ -363,6 +390,7 @@
             function animate() {
                 const previousSelectedCube = document.querySelector('.selected');
                 const selectedCube = scene.children[1 + selectedIndex];
+                let scale = 1.0;
                 if (selectedCube != previousSelectedCube) {
                     if (previousSelectedCube !== null) {
                         previousSelectedCube.classList.remove('selected');
@@ -372,8 +400,10 @@
                     }
                     selectedCube.classList.add('selected');
                     if (selectedCube.classList.contains('empty')) {
+                        scale = 1.6;
                         selectedCube.classList.add('selected-empty');
                     } else {
+                        scale = 2.3;
                         selectedCube.classList.add('selected-populated');
                     }
                 }
@@ -383,11 +413,12 @@
                 const wobbleY = Math.cos(time * 2) * 5; // Wobble +-5px
                 const rotation = Math.sin(time) * 5; // Rotate +-5 degrees
 
-                selectedCube.style.transform = `translate(${wobbleX}px, ${wobbleY}px) rotate(${rotation}deg) rotateX(${rotation}deg) rotateY(${rotation}deg)`;
+                selectedCube.style.transform = `translate(${wobbleX}px, ${wobbleY}px) rotate(${rotation}deg) rotateX(${rotation}deg) rotateY(${rotation}deg) scale(${scale})`;
                 // requestAnimationFrame(animate);
             }
 
             requestAnimationFrame(animate);
+            // setInterval(animate, 1000 / 30);
         </script>
 
         <div class="info">
@@ -408,7 +439,8 @@
         function resize() {
             // clear changes
             document.body.style.zoom = '';
-            document.body.style.height = '';            
+            document.body.style.height = '';
+            // document.body.style.transform = '';
 
             const bg = document.querySelector('.background');
             const rect = bg.getBoundingClientRect();
@@ -419,9 +451,9 @@
             console.log("factor", factor);
             document.body.style.zoom = factor;
             document.body.style.height = `${100 / factor}vh`;
+            // document.body.style.transform = `scale(${100 / factor})`;
         }
 
-        // setInterval(resize, 1000);
         window.addEventListener('resize', resize);
         resize();
     </script>
