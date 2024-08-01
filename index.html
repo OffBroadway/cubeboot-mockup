@@ -45,6 +45,7 @@
             /* background: url('samples/grid.png') no-repeat; */
             /* background: url('samples/empty.png') no-repeat; */
             /* background: url('samples/partial.png') no-repeat; */
+            /* background: url('samples/start.png') no-repeat; */
             background-size: contain;
             opacity: 1.0;
         }
@@ -195,9 +196,9 @@
         .bottom { transform: rotateX(-90deg) translateZ(25px); }
 
         .middle {
-            transform: rotateY(180deg) translateZ(6px);
-            background: none;
-            border: none;
+            transform: rotateY(0deg) translateZ(6px);
+            background: none !important;
+            border: none !important;
         }
 
         .grid-container {
@@ -220,11 +221,11 @@
             width: 100%;
             height: 140px;
 
-            color: white;
-            background: linear-gradient(#500082, #800057 50%);
+            color: #ddd;
+            background: linear-gradient(#500082d8, #800057d8 50%);
             border: 4px solid #ccc;
 
-            opacity: 0.75;
+            /* opacity: 0.85; */
 
             font-family: 'proxima-soft', sans-serif;
             font-size: 32px;
@@ -314,6 +315,45 @@
             z-index: -1;
         }
 
+        .start-banner {
+            position: absolute;
+            top: 272px;
+            left: 80px;
+            width: 200px;
+        }
+
+        .start-text {
+            font-family: 'proxima-soft', sans-serif;
+            font-weight: 400;
+            color: white;
+        }
+
+        .start-name {
+            font-size: 28px;
+            position: absolute;
+            top: 352px;
+            left: 82px;
+        }
+
+        .start-company {
+            /* font-size: 24px; */
+            font-size: 20px;
+            position: absolute;
+            top: 396px;
+            left: 82px;
+        }
+
+        .start-desc {
+            font-size: 27px;
+            line-height: 31px;
+            position: absolute;
+            top: 426px;
+            left: 82px;
+            width: 570px;
+            max-height: 60px;
+            overflow: hidden;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -333,11 +373,11 @@
         }
 
         .fade-in {
-            animation: fadeIn 700ms forwards;
+            animation: fadeIn 500ms forwards;
         }
 
         .fade-out {
-            animation: fadeOut 700ms forwards;
+            animation: fadeOut 500ms forwards;
             opacity: 0; /* Ensure it's hidden after animation */
         }
 
@@ -367,15 +407,20 @@
             <span data-text="R">R</span>
             <span data-text="T">T</span>
         </div>
+
+        <img class="start-banner hidden" src="assets/banner.png" />
+        <div class="start-text start-name hidden"><span>SOME GAME</span></div>
+        <div class="start-text start-company hidden"><span>ME</span></div>
+        <div class="start-text start-desc hidden"><span>Hello there</span></div>
     </div>
     
     <div class="scene">
-        <div class="info">
-            <div class="info-left">
+        <div class="info hidden">
+            <div class="info-left hidden">
                 <img src="assets/banner.png" />
             </div>
 
-            <div class="info-right">
+            <div class="info-right hidden">
                 <span>SOME GAME NAME</span>
                 <br>
                 <span class="game-type">ISO</span>
@@ -397,6 +442,14 @@
             element.classList.add('fade-in');
         }
 
+        function hideElementNow(element) {
+            element.classList.add('hidden');
+        }
+
+        function showElementNow(element) {
+            element.classList.remove('hidden');
+        }
+
         const scene = document.querySelector('.scene');
         const info = document.querySelector('.info');
         const rows = 4;
@@ -408,37 +461,77 @@
         console.log("populatedRows", populatedRows);
         console.log("populatedExtra", populatedExtra);
 
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                const cube = document.createElement('div');
-                cube.classList.add('cube');
-                if (i < populatedRows || i == populatedRows && j < populatedExtra) {
-                    cube.classList.add('populated');
-                } else {
-                    cube.classList.add('empty');
-                }
+        const selectInfoBanner = document.querySelector('.info-left img');
+        const selectInfoName = document.querySelectorAll('.info-right span')[0];
+        const selectInfoDesc = document.querySelectorAll('.info-right span')[2];
 
-                const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
-                faces.forEach(face => {
-                    const faceDiv = document.createElement('div');
-                    faceDiv.classList.add(face);
-                    cube.appendChild(faceDiv);
-                });
+        const selectInfoLeft = document.querySelector('.info-left');
+        const selectInfoRight = document.querySelector('.info-right');
 
-                if (cube.classList.contains('populated')) {
-                    const faceDiv = document.createElement('div');
-                    faceDiv.classList.add('middle');
+        const startBanner = document.querySelector('.start-banner');
+        const startName = document.querySelector('.start-name');
+        const startCompany = document.querySelector('.start-company');
+        const startDesc = document.querySelector('.start-desc');
 
-                    const img = document.createElement('img');
-                    img.src = 'assets/banner.png';
-                    faceDiv.appendChild(img);
+        let games = [];
+        function showGame(index) {
+            console.log("showGame", index);
+            const game = games[index];
+            selectInfoBanner.src = game.banner_path;
+            selectInfoName.textContent = game.display_name;
+            selectInfoDesc.textContent = game.short_desc;
 
-                    cube.appendChild(faceDiv);
-                }
+            startBanner.src = game.banner_path;
+            startName.textContent = game.display_name;
+            startCompany.textContent = "OPEN SOURCE";
+            startDesc.textContent = game.long_desc;
 
-                scene.insertBefore(cube, info);
-            }
+            showElementNow(selectInfoLeft);
+            showElementNow(selectInfoRight);
         }
+
+        async function setupCubes() {
+            const resp = await fetch('games.json');
+            games = await resp.json();
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const cube = document.createElement('div');
+                    cube.classList.add('cube');
+                    if (i < populatedRows || i == populatedRows && j < populatedExtra) {
+                        cube.classList.add('populated');
+                    } else {
+                        cube.classList.add('empty');
+                    }
+
+                    const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
+                    faces.forEach(face => {
+                        const faceDiv = document.createElement('div');
+                        faceDiv.classList.add(face);
+                        cube.appendChild(faceDiv);
+                    });
+
+                    if (cube.classList.contains('populated')) {
+                        const faceDiv = document.createElement('div');
+                        faceDiv.classList.add('middle');
+
+                        const img = document.createElement('img');
+                        img.src = games[i * cols + j].icon_path;
+                        faceDiv.appendChild(img);
+
+                        cube.appendChild(faceDiv);
+                    }
+
+                    scene.insertBefore(cube, info);
+                }
+            }
+
+            showGame(0);
+            info.classList.remove('hidden');
+
+            requestAnimationFrame(animate);
+        }
+        setupCubes();
 
         // Add the selected class to one cube for animation
         let selectedIndex = 0;
@@ -458,6 +551,10 @@
                 hideElement(loaderText);
                 showElement(startText);
                 showElement(readyText);
+                showElement(startBanner);
+                showElement(startName);
+                showElement(startCompany);
+                showElement(startDesc);
                 currentPage = PAGE_LOADING;
             }
 
@@ -506,6 +603,10 @@
                 showElement(loaderText);
                 hideElement(startText);
                 hideElement(readyText);
+                hideElement(startBanner);
+                hideElement(startName);
+                hideElement(startCompany);
+                hideElement(startDesc);
                 currentPage = PAGE_SELECTING;
             }
         }
@@ -533,8 +634,11 @@
                 selectedCube.classList.add('selected');
                 if (selectedCube.classList.contains('empty')) {
                     selectedCube.classList.add('selected-empty');
+                    hideElementNow(selectInfoLeft);
+                    hideElementNow(selectInfoRight);
                 } else {
                     selectedCube.classList.add('selected-populated');
+                    showGame(selectedIndex);
                 }
             }
 
@@ -556,21 +660,19 @@
             // start text
             const amplitude = 2; // Amplitude of the dance
             const frequency = 2; // Frequency of the dance
-            const rotationAmplitude = 8; // Amplitude of rotation
+            const rotationAmplitude = 3; // Amplitude of rotation
             const swayAmplitude = 8; // Amplitude of rotation
 
             const x = amplitude * Math.sin(frequency * time);
             const y = amplitude * Math.abs(Math.cos(frequency * time)) * 2;
             const z = amplitude * Math.sin(frequency * time / 2); // Add some Z movement
 
-            const rotateY = swayAmplitude * Math.sin(time) * 2;
-            const rotateXZ = rotationAmplitude * Math.sin(frequency * time / 2) / 3;
+            const rotateY = swayAmplitude * Math.sin(time) * 4;
+            const rotateXZ = rotationAmplitude * Math.sin(frequency * time / 2);
 
-            startText.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotateY}deg) rotateX(${rotateXZ}deg) rotateZ(${rotateXZ}deg) scale(0.90)`;
+            startText.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotateY}deg) rotateX(8deg) rotateZ(${rotateXZ}deg) scale(0.90)`;
             requestAnimationFrame(animate);
         }
-
-        requestAnimationFrame(animate);
 
         function resize() {
             // clear changes
