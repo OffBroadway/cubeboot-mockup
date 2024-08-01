@@ -30,6 +30,8 @@
             align-items: center; 
             perspective: 1000px; /* Adjusted perspective value for a subtler 3D effect */
             background: black;
+            overflow: hidden;
+            cursor: none;
         }
 
         .sample {
@@ -209,6 +211,7 @@
             mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 10%, rgba(0, 0, 0, 50%) 25%, transparent 60%);
             background-image: linear-gradient(90deg, #5d5d5d 2px, transparent 0), linear-gradient(180deg, #5d5d5d 2px, transparent 0);
             background-size: 20px 20px;
+            background-position: 6px 4px;
             opacity: 0.75;
         }
 
@@ -344,7 +347,8 @@
         }
 
         .start-desc {
-            font-size: 27px;
+            /* font-size: 27px; */
+            font-size: 26px;
             line-height: 31px;
             position: absolute;
             top: 426px;
@@ -382,14 +386,15 @@
         }
 
         .hidden {
-            display: none !important;
+            /* display: none !important; */
+            opacity: 0 !important;
         }
     </style>
 </head>
 <body>
     <!-- <img class="sample" src="samples/empty.png" /> -->
-    <div class="grid-container"></div>
-    <div class="background">
+    <div class="grid-container hidden"></div>
+    <div class="background hidden">
         <div class="text-loader"><span class="loader">cubeboot loader</span></div>
         <div class="text-ready hidden"><span class="ready">Ready to play the game?</span></div>
         <div class="text-watermark"><span class="watermark">MOCKUP<br/>cubeboot</span></div>
@@ -414,7 +419,7 @@
         <div class="start-text start-desc hidden"><span>Hello there</span></div>
     </div>
     
-    <div class="scene">
+    <div class="scene hidden">
         <div class="info hidden">
             <div class="info-left hidden">
                 <img src="assets/banner.png" />
@@ -450,6 +455,8 @@
             element.classList.remove('hidden');
         }
 
+        const bg = document.querySelector('.background');
+        const grid = document.querySelector('.grid-container');
         const scene = document.querySelector('.scene');
         const info = document.querySelector('.info');
         const rows = 4;
@@ -611,7 +618,28 @@
             }
         }
 
+        let fullFade = true;
+        function toggleFade() {
+            if (fullFade) {
+                showElement(bg);
+                showElement(grid);
+                showElement(scene);
+                fullFade = false;
+            } else {
+                hideElement(bg);
+                hideElement(grid);
+                hideElement(scene);
+                fullFade = true;
+            }
+        }
+
+        setTimeout(toggleFade, 500);
+
         function keydownHandler(event) {
+            if (event.key === ' ') {
+                toggleFade();
+            }
+
             if (currentPage === PAGE_SELECTING) {
                 selectingKeydownHandler(event);
             } else if (currentPage === PAGE_LOADING) {
@@ -638,6 +666,8 @@
                     hideElementNow(selectInfoRight);
                 } else {
                     selectedCube.classList.add('selected-populated');
+                    console.log(previousSelectedCube);
+                    console.log(selectedCube);
                     showGame(selectedIndex);
                 }
             }
@@ -680,7 +710,6 @@
             document.body.style.height = '';
             // document.body.style.transform = '';
 
-            const bg = document.querySelector('.background');
             const rect = bg.getBoundingClientRect();
             let factor = document.body.clientWidth / rect.width;
             if (factor * rect.height > document.body.clientHeight) {

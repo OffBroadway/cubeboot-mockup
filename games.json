@@ -1,0 +1,98 @@
+[
+    {
+        "name": "supertux",
+        "display_name": "SuperTux",
+        "short_desc": "Run and jump through multiple worlds, fighting off enemies by jumping on them, bumping them from below or tossing objects at them, grabbing power-ups and other stuff on the way.",
+        "long_desc": "When Tux wakes up, he finds that Penny is missing. Where she lay before now lies a letter.",
+        "banner_path": "games/supertux.png",
+        "icon_path": "games/supertux_icon.png"
+    },
+    {
+        "name": "ufoai",
+        "display_name": "UFO: Alien Invasion",
+        "short_desc": "Players must defend earth against an alien invasion by building bases around the world, shooting down alien UFOs and sending in infantry squads to engage the enemies in turn-based tactical combat.",
+        "long_desc": "Players will have to recruit and equip soldiers, hire scientists to research new technologies, and employ engineers to build new weaponry, aircraft and equipment. Funding comes from nations and the sale of loot acquired from successful ground missions.",
+        "banner_path": "games/ufoai.png",
+        "icon_path": "games/ufoai_icon.png"
+    },
+    {
+        "name": "arm",
+        "display_name": "Armagetron Advanced",
+        "short_desc": "The vehicles constantly move forward, leaving a colored trail behind them as they travel.",
+        "long_desc": "Being close to a colored trail causes the bike to accelerate; the closer the player is to the trail, the greater the acceleration.",
+        "banner_path": "games/arm.png",
+        "icon_path": "games/arm_icon.png"
+    },
+    {
+        "name": "sintel",
+        "display_name": "Sintel The Game",
+        "short_desc": "An open source adventure game created with Blender3D based on the open source film 'Sintel'.",
+        "long_desc": "The goal of this project was to expand upon the world of Sintel and to develop a platform that enables users to create and share their own content.",
+        "banner_path": "games/sintel.png",
+        "icon_path": "games/sintel_icon.png"
+    },
+    {
+        "name": "xmoto",
+        "display_name": "X-Moto",
+        "short_desc": "A challenging 2D motocross platform game, where physics play an important role.",
+        "long_desc": "You need to control your bike to its limit, if you want to have a chance finishing the more difficult of the challenges.",
+        "banner_path": "games/xmoto.png",
+        "icon_path": "games/xmoto_icon.png"
+    },
+    {
+        "name": "xconq",
+        "display_name": "Xconq",
+        "short_desc": "Xconq is a general strategy game system.",
+        "long_desc": "The game library includes games for ancient civilizations, the Peloponnesian War, the Roman Civil War, Frederician strategy, Napoleonic strategy, Gettysburg at a brigade scale, the Russian revolution, the Normandy invasion, WWII at scales from tactical to grand strategic, Beirut street fighting, voyages of discovery, African exploration, and many others, including space and fantasy games.",
+        "banner_path": "games/xconq.png",
+        "icon_path": "games/xconq_icon.png"
+    },
+    {
+        "name": "one",
+        "display_name": "One Hour One Life",
+        "short_desc": "This game is about playing one small part in a much larger story.",
+        "long_desc": "You only live an hour, but time and space in this game is infinite. You can only do so much in one lifetime, but the tech tree in this game will take hundreds of generations to fully explore.",
+        "banner_path": "games/one.png",
+        "icon_path": "games/one_icon.png"
+    },
+    {
+        "name": "ad",
+        "display_name": "0 A.D.",
+        "short_desc": "A traditional real-time strategy gameplay components of building a base, developing an economy, training an army, engaging in combat, and researching new technologies.",
+        "long_desc": "The game includes multiple units and buildings specific to each civilization as well as both land and naval units.",
+        "banner_path": "games/ad.png",
+        "icon_path": "games/ad_icon.png"
+    },
+    {
+        "name": "s3d",
+        "display_name": "Scorched 3D",
+        "short_desc": "Scorched 3D tasks players with destroying enemy tanks using different weapon systems, defense systems, gadgets, and maneuvers.",
+        "long_desc": "At the beginning of each round, AI and player controlled tanks are randomly situated on a 3D landscape.",
+        "banner_path": "games/s3d.png",
+        "icon_path": "games/s3d_icon.png"
+    },
+    {
+        "name": "battle",
+        "display_name": "The Battle for Wesnoth",
+        "short_desc": "The Battle for Wesnoth is a turn-based wargame played on a hex map.",
+        "long_desc": "The strategy of battle involves trying to fight on favorable terrain, at a favorable time of day, and, if possible, with units that are strong or well suited against the enemies.",
+        "banner_path": "games/battle.png",
+        "icon_path": "games/battle_icon.png"
+    },
+    {
+        "name": "dark",
+        "display_name": "A Dark Room",
+        "short_desc": "The game begins with the player awakening in a cold, dark room after a mysterious event.",
+        "long_desc": "Initially, the player can only light and tend a fire in the room. As the game progresses, the player gains the abilities to collect resources, interact with strangers, start a village, and explore the world. As the game progresses, the type and quantity of resources and exploration available increases.",
+        "banner_path": "games/dark.png",
+        "icon_path": "games/dark_icon.png"
+    },
+    {
+        "name": "boswars",
+        "display_name": "Bos Wars",
+        "short_desc": "A futuristic real-time strategy game featuring a dynamic rate-based economy.",
+        "long_desc": "Resources are continuously produced while also being consumed by creating buildings and training new units.",
+        "banner_path": "games/boswars.png",
+        "icon_path": "games/boswars_icon.png"
+    }
+]
